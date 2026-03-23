@@ -1,4 +1,4 @@
-Job Application Tracker
+# Job Application Tracker
 A responsive web application to track and manage your job search pipeline, built with HTML, CSS and JavaScript.
 
 ## Tech Stack
