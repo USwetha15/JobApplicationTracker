@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">JT</div>
+      <div>
+        <div class="logo-title">Job Tracker</div>
+        <div class="logo-sub">Your career pipeline</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-date" id="header-date"></div>
+      <button class="add-btn" onclick="openModal()">+ New Application</button>
+    </div>
+  </header>
+
+  <!-- STATS BAR -->
+  <section class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num" id="s-total">0</div>
+      <div class="stat-label">Total Applied</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num accent-blue" id="s-screen">0</div>
+      <div class="stat-label">Screening</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num accent-yellow" id="s-interview">0</div>
+      <div class="stat-label">Interviewing</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num accent-green" id="s-offer">0</div>
+      <div class="stat-label">Offers</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num accent-red" id="s-rejected">0</div>
+      <div class="stat-label">Rejected</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="stat-num accent-purple" id="s-rate">0%</div>
+      <div class="stat-label">Response Rate</div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- FILTERS -->
+    <div class="toolbar">
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="setFilter('all', this)">All</button>
+        <button class="filter-tab" onclick="setFilter('applied', this)">Applied</button>
+        <button class="filter-tab" onclick="setFilter('screening', this)">Screening</button>
+        <button class="filter-tab" onclick="setFilter('interview', this)">Interview</button>
+        <button class="filter-tab" onclick="setFilter('offer', this)">Offer</button>
+        <button class="filter-tab" onclick="setFilter('rejected', this)">Rejected</button>
+      </div>
+      <div class="toolbar-right">
+        <input class="search-box" type="text" placeholder="Search company or role..." id="search-input" oninput="renderCards()">
+        <div class="view-toggle">
+          <button class="view-btn active" id="view-grid" onclick="setView('grid', this)" title="Grid View">⊞</button>
+          <button class="view-btn" id="view-list" onclick="setView('list', this)" title="List View">☰</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- KANBAN / CARDS -->
+    <div class="cards-container" id="cards-container"></div>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state" id="empty-state" style="display:none">
+      <div class="empty-icon">◎</div>
+      <div class="empty-title">No applications yet</div>
+      <div class="empty-sub">Click "+ New Application" to start tracking your job search</div>
+    </div>
+
+  </main>
+
+  <!-- ADD / EDIT MODAL -->
+  <div class="modal-backdrop" id="modal" onclick="handleBackdropClick(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">New Application</div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Company *</label>
+            <input class="form-input" id="f-company" placeholder="e.g. Google">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Role *</label>
+            <input class="form-input" id="f-role" placeholder="e.g. Frontend Engineer">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input class="form-input" id="f-location" placeholder="e.g. Remote / Chennai">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Salary Range</label>
+            <input class="form-input" id="f-salary" placeholder="e.g. ₹12–18 LPA">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="f-status">
+              <option value="applied">Applied</option>
+              <option value="screening">Screening</option>
+              <option value="interview">Interview</option>
+              <option value="offer">Offer</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date Applied</label>
+            <input class="form-input" id="f-date" type="date">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Job URL</label>
+            <input class="form-input" id="f-url" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select class="form-select" id="f-priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label">Notes</label>
+          <textarea class="form-textarea" id="f-notes" placeholder="Recruiter name, interview rounds, referral, etc."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-save" onclick="saveApplication()" id="save-btn">Save Application</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM -->
+  <div class="modal-backdrop" id="delete-modal" onclick="handleDeleteBackdrop(event)">
+    <div class="delete-box">
+      <div class="delete-icon">⚠</div>
+      <div class="delete-title">Delete Application?</div>
+      <div class="delete-sub">This cannot be undone.</div>
+      <div class="delete-actions">
+        <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn-delete" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
